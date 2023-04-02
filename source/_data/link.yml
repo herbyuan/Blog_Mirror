@@ -1,0 +1,29 @@
+- class_name: 本站链接
+  class_desc: 其他的一些网页
+  link_list:
+    - name: Jellyfin
+      link: https://jellyfin.zhuoyuan-he.cn
+      avatar: https://blog.zhuoyuan-he.cn/img/jellyfin.png
+      descr: 流媒体播放平台
+
+    - name: Share
+      link: https://share.zhuoyuan-he.cn
+      avatar: https://blog.zhuoyuan-he.cn/img/nginx.png
+      descr: 一些有用的文件
+
+- class_name: 网站
+  class_desc: 值得推荐的网站
+  link_list:
+    - name: Youtube
+      link: https://www.youtube.com/
+      avatar: https://i.loli.net/2020/05/14/9ZkGg8v3azHJfM1.png
+      descr: 视频网站
+    - name: Weibo
+      link: https://www.weibo.com/
+      avatar: https://i.loli.net/2020/05/14/TLJBum386vcnI1P.png
+      descr: 中国最大社交分享平台
+    - name: Twitter
+      link: https://twitter.com/
+      avatar: https://i.loli.net/2020/05/14/5VyHPQqR6LWF39a.png
+      descr: 社交分享平台
+
