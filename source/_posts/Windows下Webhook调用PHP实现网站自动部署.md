@@ -9,19 +9,19 @@ tags: webhook
 
 ## 引言
 
-为了远程维护的方便以及更好的兼容性和可扩展性，我把网站部署在了基于 windows 的 Nginx 上, 这样每次我要发布新的内容的时候，我就会远程登录windows界面，然后把相应的内容生成到网站文件夹里. 在之前的文章中，我已经实现了 IPv4 访问我纯 IPv6 的网站, 但是远程桌面依然不能走代理. 那现在如果可以不用远程界面就自动部署网页, 会极大减少维护的时间.
+为了远程维护的方便以及更好的兼容性和可扩展性, 我把网站部署在了基于 windows 的 Nginx 上, 这样每次我要发布新的内容的时候, 我就会远程登录windows界面, 然后把相应的内容生成到网站文件夹里. 在之前的文章中, 我已经实现了 IPv4 访问我纯 IPv6 的网站, 但是远程桌面依然不能走代理. 那现在如果可以不用远程界面就自动部署网页, 会极大减少维护的时间.
 
-操作的想法非常简单，就是我在 Gitee 创建一个我网站文件夹的仓库在我每次要更新的时候我就在远程电脑把内容 push 上去. 在收到 push 之后，我希望我的服务器能够自动的执行 pull 操作, 这样子我的网站就被自动更新了.
+操作的想法非常简单, 就是我在 Gitee 创建一个我网站文件夹的仓库在我每次要更新的时候我就在远程电脑把内容 push 上去. 在收到 push 之后, 我希望我的服务器能够自动的执行 pull 操作, 这样子我的网站就被自动更新了.
 
-前段时间在搜索相关信息的时候，我看到了 Webhook, 就是 WebHook 被触发后，自动回调一个设定的 http 地址. 网址可以动态解析发来的数据并做出相应操作, 然后返回此次调用的结果.
+前段时间在搜索相关信息的时候, 我看到了 Webhook, 就是 WebHook 被触发后, 自动回调一个设定的 http 地址. 网址可以动态解析发来的数据并做出相应操作, 然后返回此次调用的结果.
 
 ## Webhook
 
-Webhook 是一种 HTTP 回调，允许应用程序通过发送 HTTP 请求来将实时数据传递到另一个应用程序。
+Webhook 是一种 HTTP 回调, 允许应用程序通过发送 HTTP 请求来将实时数据传递到另一个应用程序. 
 
-当发生特定事件（如创建新的 GitHub 问题或付款完成）时，Webhook 会向一个特定的 URL 发送 POST 请求，将相关数据作为有效负载传递。接收方应用程序可以使用该有效负载触发进一步的操作，例如更新数据库、向用户发送通知等。
+当发生特定事件（如创建新的 GitHub 问题或付款完成）时, Webhook 会向一个特定的 URL 发送 POST 请求, 将相关数据作为有效负载传递. 接收方应用程序可以使用该有效负载触发进一步的操作, 例如更新数据库、向用户发送通知等. 
 
-Webhook 的优点在于它能够以实时性和可靠性的方式将数据传递到其他应用程序，从而使应用程序之间的集成更加简单和高效。它还允许开发人员构建出复杂的自动化流程，减少了手动干预的需要。
+Webhook 的优点在于它能够以实时性和可靠性的方式将数据传递到其他应用程序, 从而使应用程序之间的集成更加简单和高效. 它还允许开发人员构建出复杂的自动化流程, 减少了手动干预的需要. 
 
 现在主流的代码托管平台基本上都能够支持 Webhook. 在设置中设置回调的 http 地址及触发条件, 就可以在条件触发时收到 POST 过来的信息. 我使用的是 Gitee, 数据是 JSON 格式, 详细说明了这次触发的各种信息. 
 
@@ -54,7 +54,7 @@ ssh -T git@gitee.com
     location ~ \.php$ {
         # 项目根目录
         root           html;
-        # fastcgi 监听端口，如果被占用就换一个
+        # fastcgi 监听端口, 如果被占用就换一个
         fastcgi_pass   127.0.0.1:9000;
         fastcgi_index  index.php;
         fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
@@ -64,7 +64,7 @@ ssh -T git@gitee.com
  
 > 记得 `nginx -s reload` 重新加载配置文件. 
 
-然后打开 php 的配置文件, 配置nginx的支持，大约在798行，删除 `cgi.fix_pathinfo = 1` 前面的分号.
+然后打开 php 的配置文件, 配置nginx的支持, 大约在798行, 删除 `cgi.fix_pathinfo = 1` 前面的分号.
 
 把 php 的服务开起来:
 
@@ -112,23 +112,23 @@ else{
 		echo "password error";
 	}
 
-	// 项目存放物理路径，也就是站点的访问地址
+	// 项目存放物理路径, 也就是站点的访问地址
 	$path = "C:\\Users\\blogfiles";
 
-	// 判断需要下拉的分支上是否有提交，我们这里的分支名称为 main
+	// 判断需要下拉的分支上是否有提交, 我们这里的分支名称为 main
 	if ($content['ref'] == 'refs/heads/master') {
 
-	    // 执行脚本 git pull，拉取分支最新代码
+	    // 执行脚本 git pull, 拉取分支最新代码
 	    // $res = shell_exec("cd {$path} && git pull origin main 2>&1"); // 当前为www用户
 		$res = exec("cd {$path} && git pull");
 
-	    // 记录日志 ($content 返回的是一整个对象，可以按需获取里面的内容，写入日志)
+	    // 记录日志 ($content 返回的是一整个对象, 可以按需获取里面的内容, 写入日志)
 	    $res_log = '------------------------->' . PHP_EOL;
 	    $res_log .= '用户 ' . $content['pusher']['name'] . ' 于 ' . date('Y-m-d H:i:s') . ' 向项目【' . $content['repository']['name'] . '】分支【' . $content['ref'] . '】PUSH ' . $content['commits'][0]['message'] . PHP_EOL;
 	    $res_log .= $res . PHP_EOL;
 	    // $hexolog =  exec("cd {$path} && hexo clean && hexo g");
 
-	    // 追加方式，写入日志文件
+	    // 追加方式, 写入日志文件
 	    file_put_contents("git_webhook_log.txt", $res_log, FILE_APPEND);
 	    // file_put_contents("hexo_log.txt", $hexolog, FILE_APPEND);
 	    echo 'git pull excuted!<br/>';
@@ -138,7 +138,7 @@ else{
 		$res_log = '------------------------->' . PHP_EOL;
 	    $res_log .= '用户 ' . $content['pusher']['name'] . ' 于 ' . date('Y-m-d H:i:s') . ' 向项目【' . $content['repository']['name'] . '】分支【' . $content['ref'] . '】PUSH ' . $content['commits'][0]['message'] . PHP_EOL;
 
-	    // 追加方式，写入日志文件
+	    // 追加方式, 写入日志文件
 	    file_put_contents("git_webhook_log.txt", $res_log, FILE_APPEND);
 	    echo 'TEST SUCCESS!<br/>';
 	}
