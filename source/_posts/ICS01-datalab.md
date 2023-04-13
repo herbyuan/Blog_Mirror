@@ -31,7 +31,8 @@ Data Lab是第一个lab，内容也是非常简单尤其是网上有大量的资
 
 ### restrictions
 扯了这么多，现在开始看lab的内容。解压文件包之后不必惊慌，只要看`bits.c`文件。框架已经写好了，只需在限定的op数目内实现功能就好了。不要忘了看具体要求——只能使用8位以下的立即数，不能使用条件语句或者循环，只能使用受限的运算符：
-$$! \quad ˜ \quad \& \quad ˆ \quad | \quad + \quad << \quad >>$$
+
+$$! \quad \˜ \quad \& \quad \ˆ \quad | \quad + \quad << \quad >>$$
 
 ## Bit Manip
 
