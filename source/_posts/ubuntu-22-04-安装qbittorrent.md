@@ -43,7 +43,20 @@ sudo apt-get update && sudo apt-get install qbittorrent-nox -y
 
 大致来说 qBittorrent 的编译需要依赖 libtorrent 和 Qt5. 而这两个玩意都不能用 apt 安装.
 
-以 `4.5.2` 版本为例, 所有需要的文件我都打包在[这里](qbittorrent_source.zip), 可以直接下载或者去官网自行下载.
+以 `4.5.2` 版本为例, 所有需要的文件如下:
+
+- [boost_1_82_0.tar.tar.001](boost_1_82_0.tar.tar.001)
+- [boost_1_82_0.tar.tar.002](boost_1_82_0.tar.tar.002)
+- [boost_1_82_0.tar.tar.003](boost_1_82_0.tar.tar.003)
+- [boost_1_82_0.tar.tar.004](boost_1_82_0.tar.tar.004)
+- [boost_1_82_0.tar.tar.005](boost_1_82_0.tar.tar.005)
+- [boost_1_82_0.tar.tar.006](boost_1_82_0.tar.tar.006)
+- [libtorrent-rasterbar-1.2.18.tar.gz](libtorrent-rasterbar-1.2.18.tar.gz)
+- [libtorrent-rasterbar-2.0.8.tar.gz](libtorrent-rasterbar-2.0.8.tar.gz)
+- [openssl-1.1.1g.tar.gz](openssl-1.1.1g.tar.gz)
+- [qbittorrent-4.5.2.tar.gz](qbittorrent-4.5.2.tar.gz)
+
+由于单个文件限制大文件被拆分. 也可以直接下载或者去官网自行下载.
 
 ### 安装 Qt5
 
