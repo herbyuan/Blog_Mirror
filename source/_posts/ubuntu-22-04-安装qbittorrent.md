@@ -61,21 +61,14 @@ sudo apt-get update && sudo apt-get install qbittorrent-nox -y
 ### 安装 Qt5
 
 ```sh
-sudo apt install build-essential cmake automake autoconf git
-sudo apt-get install qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools
-sudo apt-get install qtcreator
-sudo apt-get install qt5*
-sudo apt install libqt5svg5-dev
-sudo apt install pkg-config
+sudo apt install build-essential cmake automake autoconf git libqt5svg5-dev pkg-config
+sudo apt-get install qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools qtcreator qt5*
 ```
 
 速度慢的话替换成国内镜像.
 
 
-
-需要先安装 BOOST 和 openssl, 这两者都不能用 apt 安装的.
-
-#### 编译 boost
+#### 编译安装 boost
 
 libtorrent使用 boost C++库作为基础库而开发的, 所以需要先编译boost库. 注意 boost 版本 >=1.58 才可以在libtorrent库中使用.
 
@@ -85,8 +78,6 @@ libtorrent使用 boost C++库作为基础库而开发的, 所以需要先编译b
 sudo ./bootstrap.sh --with-libraries=all --with-toolset=gcc
 sudo ./b2
 ```
-
-这里推荐不要用 `./b2 install`, 因为我用了之后编译会出意想不到的问题.
 
 最后成功了会显示:
 
@@ -100,6 +91,14 @@ The following directory should be added to linker library paths:
 
 boost 库编译完成后可以看到它提示需要将 boost 库的头文件路径和库文件路径添加到系统的包含目录中, 便于其他软件编译时进行调用.
 
+推荐最简单的办法, 直接安装到 `/usr/local`:
+
+```sh\
+sudo ./b2 install
+```
+
+或者也可以把现在的文件夹添加到 `PATH`.
+
 用 vim 打开 `/etc/profile`, 在文件最后把之前编译 boost 之后的 boost 相关头文件路径, 库文件路径, 链接库路径加上:
 
 ```sh
@@ -110,13 +109,13 @@ export   LIBRARY_PATH=$LIBRARY_PATH:/home/kherbert/libtorrent/boost_1_82_0/stage
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/herbert/libtorrent/boost_1_82_0/stage/lib
 ``` 
 
-然后终端中使用source命令使/etc/profile配置的路径生效
+然后终端中使用source命令使/etc/profile配置的路径生效:
 
 ```sh
 source /etc/profile
 ```
 
-#### 编译openssl
+#### 编译安装 openssl
 
 编译安装openssl:
 
@@ -127,7 +126,7 @@ sudo make install
 
 这一步不太会出问题, 就是有可能有的 `so` 文件不能正确链接, 使用 `locate XXX.so` 找到文件后 `sudo ln -s XXX.so.xxx XXX.so` 建立连接.
 
-#### 编译 libtorrent
+#### 编译安装 libtorrent
 
 **注意: 编译 qB 4.5.2 一定要 libtorrent >= 1.18 && < 2 或者 >= 2.0.7!**
 
@@ -166,7 +165,7 @@ sudo cmake
 sudo make install
 ```
 
-### 编译 qBittorrent
+### 编译安装 qBittorrent
 
 终于可以编译目标文件了......
 
@@ -205,7 +204,7 @@ sudo make install
 
 ```sh
 sudo apt-get install vim -y 
-vim /etc/systemd/system/qbittorrent-nox.service
+sudo vim /etc/systemd/system/qbittorrent-nox.service
 ```
 
 输入以下内容
