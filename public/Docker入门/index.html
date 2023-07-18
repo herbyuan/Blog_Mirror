@@ -1,0 +1,192 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Docker入门 | H's Blog</title><meta name="author" content="Herbert"><meta name="copyright" content="Herbert"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Docker 入门 这篇文章讲讲 Docker 的入门级使用. 最初使用 Docker 是编译原理的大作业, 助教提供了配置好的 Docker 镜像, 这样就免去了系统与环境配置的烦恼. 购入了苹果的 Apple Silicon 芯片笔记本之后, 又开始考虑运行 x86 程序的问题. 这里只是记录下 MacOS 安装使用过程中遇到的问题, 不做深入讨论. 安装完 Docker 后, 需要打开 Do">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker入门">
+<meta property="og:url" content="https://blog.zhuoyuan-he.cn/Docker%E5%85%A5%E9%97%A8/index.html">
+<meta property="og:site_name" content="H&#39;s Blog">
+<meta property="og:description" content="Docker 入门 这篇文章讲讲 Docker 的入门级使用. 最初使用 Docker 是编译原理的大作业, 助教提供了配置好的 Docker 镜像, 这样就免去了系统与环境配置的烦恼. 购入了苹果的 Apple Silicon 芯片笔记本之后, 又开始考虑运行 x86 程序的问题. 这里只是记录下 MacOS 安装使用过程中遇到的问题, 不做深入讨论. 安装完 Docker 后, 需要打开 Do">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.zhuoyuan-he.cn/linear-gradient(20deg,%20#0062be,%20#925696,%20#cc426e,%20#fb0347)">
+<meta property="article:published_time" content="2023-06-08T07:04:18.000Z">
+<meta property="article:modified_time" content="2023-06-08T07:06:03.899Z">
+<meta property="article:author" content="Herbert">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.zhuoyuan-he.cn/linear-gradient(20deg,%20#0062be,%20#925696,%20#cc426e,%20#fb0347)"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://blog.zhuoyuan-he.cn/Docker%E5%85%A5%E9%97%A8/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: true,
+    post: true
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Docker入门',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-06-08 15:06:03'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/imgs/selfie.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">25</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">15</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background: linear-gradient(20deg, #0062be, #925696, #cc426e, #fb0347)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">H's Blog</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Docker入门</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-06-08T07:04:18.000Z" title="发表于 2023-06-08 15:04:18">2023-06-08</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-06-08T07:06:03.899Z" title="更新于 2023-06-08 15:06:03">2023-06-08</time></span></div><div class="meta-secondline"></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1>Docker 入门</h1>
+<p>这篇文章讲讲 Docker 的入门级使用.</p>
+<p>最初使用 Docker 是编译原理的大作业, 助教提供了配置好的 Docker 镜像, 这样就免去了系统与环境配置的烦恼. 购入了苹果的 Apple Silicon 芯片笔记本之后, 又开始考虑运行 <code>x86</code> 程序的问题. 这里只是记录下 <code>MacOS</code> 安装使用过程中遇到的问题, 不做深入讨论.</p>
+<p>安装完 Docker 后, 需要打开 Docker 才能在终端执行 Docker 相关命令.</p>
+<p>这里有镜像和容器的概念, 简单理解就是镜像是用于分发的打包文件, 在实例运行时(一般)会基于镜像创建一个容器(运行实例), 而一个镜像可以被多个容器使用. 在需要上传到 Dockerhub 时, 又要把容器打包成镜像.</p>
+<h2 id="寻找需要的镜像">寻找需要的镜像</h2>
+<p>首先我们要找到需要使用的镜像文件. <a target="_blank" rel="noopener" href="https://hub.docker.com/">Dockerhub</a> 提供了众多官方与非官方的打包镜像. 这里以 Ubuntu 作为演示.</p>
+<p>搜索 Ubuntu 并进入官方链接后, 右侧显示有最基本的拉取镜像方法:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull ubuntu</span><br></pre></td></tr></table></figure>
+<p>这会根据系统的架构自动拉取最新的镜像. 但是我们这里需要用 Docker 模拟 <code>x86</code> 环境, 所以要指定架构.</p>
+<img src="1.png" width="80%">
+<p>最简单的方式就是进入 <code>Tags</code> 寻找自己需要的版本和架构对应的 <code>DIGEST</code>. 例如图中的版本, 我们可以使用如下命令:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull ubuntu:22.04@sha256:2fdb1cf4995abb74c035e5f520c0f3a46f12b3377a59e86ecca66d8606ad64f9</span><br></pre></td></tr></table></figure>
+<p>即在镜像名后加上 <code>sha256</code> 值. 获得的镜像我们可以修改为自己喜欢的名称和标签. 先查看镜像的编号</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker images</span><br></pre></td></tr></table></figure>
+<p>此处我们看到 IMAGE ID 是 1f6ddc1b2547, 然后进行修改.</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker tag 1f6ddc1b2547 ubuntu:x86-64 </span><br></pre></td></tr></table></figure>
+<p>如果修改完后出现了两个镜像, 可以使用 <code>docker rmi &lt;REPOSITORY&gt;:&lt;TAG&gt;</code> 删除多出的镜像, 当然也可以在 UI 界面中删除.</p>
+<h2 id="第一个问题-容器运行后马上退出">第一个问题: 容器运行后马上退出</h2>
+<p>直接在 UI 界面运行 Ubuntu 镜像, 居然直接退出了, 我暂时还没找到原因. 但是可以用命令行正常运行, 命令如下:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -dit --name ubuntu-x86 ubuntu:x86-64</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">相关参数：</span><br><span class="line">-i 	表示交互式运行容器</span><br><span class="line">-d	表示的是守护式运行，-dit	这个指令是指守护式容器，创建成功之后，自动进入容器</span><br><span class="line">-t	表示容器开启之后进入命令行模式， -it 指令，分配一个新的伪终端，执行</span><br><span class="line">-v	表示目录的映射关系（前者是宿主机目录，后者是容器目录，将来映射到宿主机）</span><br><span class="line">-p	表示的是端口映射，前者是宿主机端口，后者是容器映射的端口</span><br><span class="line">-e	表示的容器设置环境变量</span><br><span class="line">--name容器的名字</span><br></pre></td></tr></table></figure>
+<p>之后就可以通过UI控制暂停或者停止容器了.</p>
+<img src="2.png" width="80%">
+<p>使用 <code>-d</code> 运行的容器会在后台执行. 可以使用 <code>docker ps -a</code> 查看所有的容器, 包括暂停的容器. 可以用前面若干位可以区分容器的 ID 来进入容器, 例如此处</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker attach cd9</span><br></pre></td></tr></table></figure>
+<p>在容器内使用 ‘ctrl+p ctrl+q’ 脱离但是仍然保持容器运行, 使用 <code>exit</code> 命令退出并停止运行容器.</p>
+<p>还有几种别的运行方式, 在此引用:</p>
+<ul>
+<li>docker run -it会创建前台进程，但是会在输入exit后终止进程。</li>
+<li>docker attach会通过连接stdin，连接到容器内输入输出流，会在输入exit后终止容器进程</li>
+<li>docker exec -it 会连接到容器，可以像sSH一样进入容器内部，进行操作，可以通过exit退出容器，不影响容器运行。</li>
+</ul>
+<h2 id="容器的打包">容器的打包</h2>
+<p>创建好一个容器后, 可以打包并上传到 docker hub 上, 方便自己或者别人下次使用.</p>
+<p>使用 <code>docker commit &lt;container id&gt; &lt;image name&gt;:&lt;tag&gt;</code> 创建一个镜像.</p>
+<p>登录docker并创建一个repo, 然后最重要的一步是把镜像改名为 <code>&lt;用户名&gt;/&lt;repo名&gt;:&lt;tag&gt;</code> 的形式.</p>
+<p>push之前需要确定自己拥有对应的权限. 即使已经在UI登录, 仍然需要在命令行中使用 <code>docker login</code> 重新鉴权.</p>
+<p>最后将镜像 push 到 hub.</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker push ubuntu22.04:dev</span><br></pre></td></tr></table></figure>
+<p>此处不需要用户名前缀.</p>
+<blockquote>
+<p>注意: docker hub的一些功能需要科学上网.</p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://blog.zhuoyuan-he.cn">Herbert</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://blog.zhuoyuan-he.cn/Docker%E5%85%A5%E9%97%A8/">https://blog.zhuoyuan-he.cn/Docker入门/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://blog.zhuoyuan-he.cn" target="_blank">H's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="/linear-gradient(20deg,%20#0062be,%20#925696,%20#cc426e,%20#fb0347)" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/%E5%BC%80%E7%9B%98%E7%AD%96%E7%95%A5%E7%9A%84%E6%8E%A2%E7%B4%A2/"><img class="prev-cover" src="/linear-gradient(20deg,%20#0062be,%20#925696,%20#cc426e,%20#fb0347)" onerror="onerror=null;src='/imgs/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">开盘策略的探索</div></div></a></div><div class="next-post pull-right"><a href="/CLoudFlare%E9%83%A8%E7%BD%B2%E9%9D%99%E6%80%81%E7%BD%91%E7%AB%99/"><img class="next-cover" src="/linear-gradient(20deg,%20#0062be,%20#925696,%20#cc426e,%20#fb0347)" onerror="onerror=null;src='/imgs/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">CLoudFlare部署静态网站</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/imgs/selfie.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Herbert</div><div class="author-info__description">A soul discarded</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">25</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">15</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/herbyuan"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/herbyuan" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:herbyuan@icloud.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">Eventually you come...</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">Docker 入门</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%BB%E6%89%BE%E9%9C%80%E8%A6%81%E7%9A%84%E9%95%9C%E5%83%8F"><span class="toc-number">1.1.</span> <span class="toc-text">寻找需要的镜像</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E4%B8%AA%E9%97%AE%E9%A2%98-%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E5%90%8E%E9%A9%AC%E4%B8%8A%E9%80%80%E5%87%BA"><span class="toc-number">1.2.</span> <span class="toc-text">第一个问题: 容器运行后马上退出</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%B9%E5%99%A8%E7%9A%84%E6%89%93%E5%8C%85"><span class="toc-number">1.3.</span> <span class="toc-text">容器的打包</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/%E6%95%85%E4%BA%8B%E4%B8%80%E5%88%99-0713/" title="故事一则 0713">故事一则 0713</a><time datetime="2023-07-13T11:25:51.000Z" title="发表于 2023-07-13 19:25:51">2023-07-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/%E5%BC%80%E7%9B%98%E7%AD%96%E7%95%A5%E7%9A%84%E6%8E%A2%E7%B4%A2/" title="开盘策略的探索">开盘策略的探索</a><time datetime="2023-06-08T07:04:32.000Z" title="发表于 2023-06-08 15:04:32">2023-06-08</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/Docker%E5%85%A5%E9%97%A8/" title="Docker入门">Docker入门</a><time datetime="2023-06-08T07:04:18.000Z" title="发表于 2023-06-08 15:04:18">2023-06-08</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/CLoudFlare%E9%83%A8%E7%BD%B2%E9%9D%99%E6%80%81%E7%BD%91%E7%AB%99/" title="CLoudFlare部署静态网站">CLoudFlare部署静态网站</a><time datetime="2023-04-18T08:53:42.000Z" title="发表于 2023-04-18 16:53:42">2023-04-18</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/ubuntu-22-04-%E5%AE%89%E8%A3%85qbittorrent/" title="Ubuntu 22.04 安装qBittorrent">Ubuntu 22.04 安装qBittorrent</a><time datetime="2023-04-17T02:11:56.000Z" title="发表于 2023-04-17 10:11:56">2023-04-17</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By Herbert</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex/dist/contrib/copy-tex.min.js"></script><script>(() => {
+  document.querySelectorAll('#article-container span.katex-display').forEach(item => {
+    btf.wrap(item, 'div', { class: 'katex-wrap'})
+  })
+})()</script></div></div></body></html>
