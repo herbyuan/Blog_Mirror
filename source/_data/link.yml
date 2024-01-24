@@ -3,12 +3,12 @@
   link_list:
     - name: Jellyfin
       link: https://jellyfin.zhuoyuan-he.cn
-      avatar: https://blog.zhuoyuan-he.cn/img/jellyfin.png
+      avatar: /imgs/jellyfin.png
       descr: 流媒体播放平台
 
     - name: Share
       link: https://share.zhuoyuan-he.cn
-      avatar: https://blog.zhuoyuan-he.cn/img/nginx.png
+      avatar: /imgs/nginx.png
       descr: 一些有用的文件
 
 - class_name: 网站

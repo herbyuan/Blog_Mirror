@@ -1,0 +1,210 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Windows下Webhook调用PHP实现网站自动部署 | H的部落阁</title><meta name="author" content="Herbert"><meta name="copyright" content="Herbert"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Windows下Webhook调用PHP实现网站自动部署 引言 为了远程维护的方便以及更好的兼容性和可扩展性, 我把网站部署在了基于 windows 的 Nginx 上, 这样每次我要发布新的内容的时候, 我就会远程登录windows界面, 然后把相应的内容生成到网站文件夹里. 在之前的文章中, 我已经实现了 IPv4 访问我纯 IPv6 的网站, 但是远程桌面依然不能走代理. 那现在如果可以不用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Windows下Webhook调用PHP实现网站自动部署">
+<meta property="og:url" content="https://www.zhuoyuan-he.cn/Windows%E4%B8%8BWebhook%E8%B0%83%E7%94%A8PHP%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%AB%99%E8%87%AA%E5%8A%A8%E9%83%A8%E7%BD%B2/index.html">
+<meta property="og:site_name" content="H的部落阁">
+<meta property="og:description" content="Windows下Webhook调用PHP实现网站自动部署 引言 为了远程维护的方便以及更好的兼容性和可扩展性, 我把网站部署在了基于 windows 的 Nginx 上, 这样每次我要发布新的内容的时候, 我就会远程登录windows界面, 然后把相应的内容生成到网站文件夹里. 在之前的文章中, 我已经实现了 IPv4 访问我纯 IPv6 的网站, 但是远程桌面依然不能走代理. 那现在如果可以不用">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.zhuoyuan-he.cn/linear-gradient(20deg,%20#0062be,%20#925696,%20#cc426e,%20#fb0347)">
+<meta property="article:published_time" content="2023-04-02T13:15:51.000Z">
+<meta property="article:modified_time" content="2024-01-24T08:49:32.753Z">
+<meta property="article:author" content="Herbert">
+<meta property="article:tag" content="webhook">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.zhuoyuan-he.cn/linear-gradient(20deg,%20#0062be,%20#925696,%20#cc426e,%20#fb0347)"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://www.zhuoyuan-he.cn/Windows%E4%B8%8BWebhook%E8%B0%83%E7%94%A8PHP%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%AB%99%E8%87%AA%E5%8A%A8%E9%83%A8%E7%BD%B2/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: true,
+    post: true
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Windows下Webhook调用PHP实现网站自动部署',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-01-24 16:49:32'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/imgs/selfie.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">29</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background: linear-gradient(20deg, #0062be, #925696, #cc426e, #fb0347)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">H的部落阁</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Windows下Webhook调用PHP实现网站自动部署</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-04-02T13:15:51.000Z" title="发表于 2023-04-02 21:15:51">2023-04-02</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-01-24T08:49:32.753Z" title="更新于 2024-01-24 16:49:32">2024-01-24</time></span></div><div class="meta-secondline"></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1>Windows下Webhook调用PHP实现网站自动部署</h1>
+<h2 id="引言">引言</h2>
+<p>为了远程维护的方便以及更好的兼容性和可扩展性, 我把网站部署在了基于 windows 的 Nginx 上, 这样每次我要发布新的内容的时候, 我就会远程登录windows界面, 然后把相应的内容生成到网站文件夹里. 在之前的文章中, 我已经实现了 IPv4 访问我纯 IPv6 的网站, 但是远程桌面依然不能走代理. 那现在如果可以不用远程界面就自动部署网页, 会极大减少维护的时间.</p>
+<p>操作的想法非常简单, 就是我在 Gitee 创建一个我网站文件夹的仓库在我每次要更新的时候我就在远程电脑把内容 push 上去. 在收到 push 之后, 我希望我的服务器能够自动的执行 pull 操作, 这样子我的网站就被自动更新了.</p>
+<p>前段时间在搜索相关信息的时候, 我看到了 Webhook, 就是 WebHook 被触发后, 自动回调一个设定的 http 地址. 网址可以动态解析发来的数据并做出相应操作, 然后返回此次调用的结果.</p>
+<h2 id="Webhook">Webhook</h2>
+<p>Webhook 是一种 HTTP 回调, 允许应用程序通过发送 HTTP 请求来将实时数据传递到另一个应用程序.</p>
+<p>当发生特定事件（如创建新的 GitHub 问题或付款完成）时, Webhook 会向一个特定的 URL 发送 POST 请求, 将相关数据作为有效负载传递. 接收方应用程序可以使用该有效负载触发进一步的操作, 例如更新数据库、向用户发送通知等.</p>
+<p>Webhook 的优点在于它能够以实时性和可靠性的方式将数据传递到其他应用程序, 从而使应用程序之间的集成更加简单和高效. 它还允许开发人员构建出复杂的自动化流程, 减少了手动干预的需要.</p>
+<p>现在主流的代码托管平台基本上都能够支持 Webhook. 在设置中设置回调的 http 地址及触发条件, 就可以在条件触发时收到 POST 过来的信息. 我使用的是 Gitee, 数据是 JSON 格式, 详细说明了这次触发的各种信息.</p>
+<p>这里的设置其实非常简单, 但是为了自动化两边的 git 应当设置好 SSH 密钥并在托管平台上登记. 最简单的方法如下</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa</span><br></pre></td></tr></table></figure>
+<p>可能会提示配置全局的账号和用户名, 按照提示设置就好. 这里的账号和用户名都不需要和代码托管平台注册的信息相同, 但是会在每次 push 的时候被记录下信息.</p>
+<p>在账号文件夹的 <code>.ssh</code> 文件夹中找到 <code>id_rsa.pub</code> 文件, 将里面所有信息复制到托管平台 SSH Key 上登记. 可以使用如下命令查看是否成功.</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -T git@gitee.com</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>不要问我为什么不用Github作说明, 这个网站国内的访问体验又不是不知道. 如果代码不是特别重要或者政治相关, 国内的托管平台也挺好用的.</p>
+</blockquote>
+<p>最好使用这个方式拉取一次代码, 因为后期使用php了就很难看出问题到底出在哪, 之前能解决的问题一定要尽早发现解决.</p>
+<h2 id="PHP文件">PHP文件</h2>
+<p>安装好 PHP 之后需要设置让 nginx 调用.</p>
+<p>打开 nginx 的 <code>nginx.conf</code>, 在对应的域名下面增加处理 php 的模块. 这部分好像默认配置就有, 取消注释就好了.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000</span><br><span class="line">    #</span><br><span class="line">    location ~ \.php$ &#123;</span><br><span class="line">        # 项目根目录</span><br><span class="line">        root           html;</span><br><span class="line">        # fastcgi 监听端口, 如果被占用就换一个</span><br><span class="line">        fastcgi_pass   127.0.0.1:9000;</span><br><span class="line">        fastcgi_index  index.php;</span><br><span class="line">        fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;</span><br><span class="line">        include        fastcgi_params;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>记得 <code>nginx -s reload</code> 重新加载配置文件.</p>
+</blockquote>
+<p>然后打开 php 的配置文件, 配置nginx的支持, 大约在798行, 删除 <code>cgi.fix_pathinfo = 1</code> 前面的分号.</p>
+<p>把 php 的服务开起来:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">php-cgi.exe -b 127.0.0.1:9000 -c php.ini</span><br></pre></td></tr></table></figure>
+<p>先写一个最简单的文件用来测试.</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;Webhooks 测试&lt;br/&gt;&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&#x27;&lt;br/&gt;测试：ls 输出项目路径：&lt;br/&gt;&#x27;</span>;</span><br><span class="line"><span class="title function_ invoke__">exec</span>(<span class="string">&quot;dir <span class="subst">&#123;$path&#125;</span>&quot;</span>, <span class="variable">$output</span>, <span class="variable">$status</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&#x27;&lt;pre&gt;&#x27;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">print_r</span>(<span class="variable">$output</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&#x27;&lt;/pre&gt;&#x27;</span>;</span><br><span class="line"><span class="title function_ invoke__">print_r</span>(<span class="variable">$status</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>命名为 <code>test.php</code> 放到根目录下测试一下.</p>
+<p>访问 <code>zhuoyuan-he.cn/test.php</code>, 可以得到输出, 说明之前的配置没有问题.</p>
+<p>接下来处理回调时发过来的信息, 总的来说分成三步: 先解析 JSON, 然后验证密码, 最后执行相关的操作然后返回信息.</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="title function_ invoke__">header</span>(<span class="string">&#x27;Content-type: text/html; charset=utf-8&#x27;</span>);</span><br><span class="line"><span class="title function_ invoke__">ini_set</span>(<span class="string">&quot;error_reporting&quot;</span>, <span class="string">&quot;E_ALL &amp; ~E_NOTICE&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 接收post参数</span></span><br><span class="line"><span class="variable">$requestBody</span> = <span class="title function_ invoke__">file_get_contents</span>(<span class="string">&quot;php://input&quot;</span>);</span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">empty</span>(<span class="variable">$requestBody</span>)) &#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;data null！This site is used to update blog files using webhook.&lt;br/&gt;&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span>&#123;</span><br><span class="line">	<span class="comment">// Content type = application/json</span></span><br><span class="line">	<span class="variable">$content</span> = <span class="title function_ invoke__">json_decode</span>(<span class="variable">$requestBody</span>, <span class="literal">true</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 验证 Webhooks 配置的密码</span></span><br><span class="line">	<span class="keyword">if</span> (<span class="keyword">empty</span>(<span class="variable">$content</span>[<span class="string">&#x27;password&#x27;</span>]) || <span class="variable">$content</span>[<span class="string">&#x27;password&#x27;</span>] != <span class="string">&#x27;123456&#x27;</span>) &#123;</span><br><span class="line">		<span class="keyword">echo</span> <span class="string">&quot;password error&quot;</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 项目存放物理路径, 也就是站点的访问地址</span></span><br><span class="line">	<span class="variable">$path</span> = <span class="string">&quot;C:\\Users\\blogfiles&quot;</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 判断需要下拉的分支上是否有提交, 我们这里的分支名称为 main</span></span><br><span class="line">	<span class="keyword">if</span> (<span class="variable">$content</span>[<span class="string">&#x27;ref&#x27;</span>] == <span class="string">&#x27;refs/heads/master&#x27;</span>) &#123;</span><br><span class="line"></span><br><span class="line">	    <span class="comment">// 执行脚本 git pull, 拉取分支最新代码</span></span><br><span class="line">	    <span class="comment">// $res = shell_exec(&quot;cd &#123;$path&#125; &amp;&amp; git pull origin main 2&gt;&amp;1&quot;); // 当前为www用户</span></span><br><span class="line">		<span class="variable">$res</span> = <span class="title function_ invoke__">exec</span>(<span class="string">&quot;cd <span class="subst">&#123;$path&#125;</span> &amp;&amp; git pull&quot;</span>);</span><br><span class="line"></span><br><span class="line">	    <span class="comment">// 记录日志 ($content 返回的是一整个对象, 可以按需获取里面的内容, 写入日志)</span></span><br><span class="line">	    <span class="variable">$res_log</span> = <span class="string">&#x27;-------------------------&gt;&#x27;</span> . PHP_EOL;</span><br><span class="line">	    <span class="variable">$res_log</span> .= <span class="string">&#x27;用户 &#x27;</span> . <span class="variable">$content</span>[<span class="string">&#x27;pusher&#x27;</span>][<span class="string">&#x27;name&#x27;</span>] . <span class="string">&#x27; 于 &#x27;</span> . <span class="title function_ invoke__">date</span>(<span class="string">&#x27;Y-m-d H:i:s&#x27;</span>) . <span class="string">&#x27; 向项目【&#x27;</span> . <span class="variable">$content</span>[<span class="string">&#x27;repository&#x27;</span>][<span class="string">&#x27;name&#x27;</span>] . <span class="string">&#x27;】分支【&#x27;</span> . <span class="variable">$content</span>[<span class="string">&#x27;ref&#x27;</span>] . <span class="string">&#x27;】PUSH &#x27;</span> . <span class="variable">$content</span>[<span class="string">&#x27;commits&#x27;</span>][<span class="number">0</span>][<span class="string">&#x27;message&#x27;</span>] . PHP_EOL;</span><br><span class="line">	    <span class="variable">$res_log</span> .= <span class="variable">$res</span> . PHP_EOL;</span><br><span class="line">	    <span class="comment">// $hexolog =  exec(&quot;cd &#123;$path&#125; &amp;&amp; hexo clean &amp;&amp; hexo g&quot;);</span></span><br><span class="line"></span><br><span class="line">	    <span class="comment">// 追加方式, 写入日志文件</span></span><br><span class="line">	    <span class="title function_ invoke__">file_put_contents</span>(<span class="string">&quot;git_webhook_log.txt&quot;</span>, <span class="variable">$res_log</span>, FILE_APPEND);</span><br><span class="line">	    <span class="comment">// file_put_contents(&quot;hexo_log.txt&quot;, $hexolog, FILE_APPEND);</span></span><br><span class="line">	    <span class="keyword">echo</span> <span class="string">&#x27;git pull excuted!&lt;br/&gt;&#x27;</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">	&#123;</span><br><span class="line">		<span class="variable">$res_log</span> = <span class="string">&#x27;-------------------------&gt;&#x27;</span> . PHP_EOL;</span><br><span class="line">	    <span class="variable">$res_log</span> .= <span class="string">&#x27;用户 &#x27;</span> . <span class="variable">$content</span>[<span class="string">&#x27;pusher&#x27;</span>][<span class="string">&#x27;name&#x27;</span>] . <span class="string">&#x27; 于 &#x27;</span> . <span class="title function_ invoke__">date</span>(<span class="string">&#x27;Y-m-d H:i:s&#x27;</span>) . <span class="string">&#x27; 向项目【&#x27;</span> . <span class="variable">$content</span>[<span class="string">&#x27;repository&#x27;</span>][<span class="string">&#x27;name&#x27;</span>] . <span class="string">&#x27;】分支【&#x27;</span> . <span class="variable">$content</span>[<span class="string">&#x27;ref&#x27;</span>] . <span class="string">&#x27;】PUSH &#x27;</span> . <span class="variable">$content</span>[<span class="string">&#x27;commits&#x27;</span>][<span class="number">0</span>][<span class="string">&#x27;message&#x27;</span>] . PHP_EOL;</span><br><span class="line"></span><br><span class="line">	    <span class="comment">// 追加方式, 写入日志文件</span></span><br><span class="line">	    <span class="title function_ invoke__">file_put_contents</span>(<span class="string">&quot;git_webhook_log.txt&quot;</span>, <span class="variable">$res_log</span>, FILE_APPEND);</span><br><span class="line">	    <span class="keyword">echo</span> <span class="string">&#x27;TEST SUCCESS!&lt;br/&gt;&#x27;</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">echo</span> <span class="string">&#x27;done&lt;br/&gt;&#x27;</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>本来打算只同步一个资源文件夹放到服务器上自动编译, 但是 Gitee 的 Webhook 要在十秒之内返回, 不然就报错, 只能传编译好的版本了.</p>
+<h2 id="php-cgi-开机自启与进程守护"><code>php-cgi</code> 开机自启与进程守护</h2>
+<p>问题的关键在这一部分. 之前的操作网上有很多教程, 也都不太会出问题, 但是一旦到了生产环节, 谈论细节的文章就很少了, 甚至很多过时的错误的文章还在一遍遍被复制.</p>
+<p>Windows 下开机自动启动 <code>php-cgi</code> 并建立守护进程和一般的不太一样. 首先, 据说 <code>php-cgi</code> 处理500次之后就自动退出了, 我没试过但是不守护直接裸奔看起来很不靠谱. 然后为了性能考虑, 一般会建立多个进程监听同一个端口, 在 linux 上有 <code>php-fpm</code>, 但是 windows 上好像没有, 就算有也要自己编译 php. 但凡有这个水平在 windows 上编译的我相信都不会用windows来跑php(当然这个也可以讲讲有空了再说). 网上的文章有一大半说的是直接用 <a target="_blank" rel="noopener" href="https://github.com/winsw/winsw/releases/">winsw (Windows Service Wrapper)</a>, 这个玩意会根据配置文件构建启动和停止的命令, 也会建立守护进程, 打包成系统服务之后确实挺好用, 另一个差不多的是 <a target="_blank" rel="noopener" href="https://nssm.cc/download">nssm</a>, 这个东西有个图形界面, 但是注意选好之后一定要改服务名称, 默认会用 <code>./</code> 开头, 安装就报错. 但是它只能跑一个进程, 不太能多开. 所以另一半的文章建议不要直接用 winsw 守护 <code>php-cgi</code>, 而是搞了个 <code>xxfpm</code> 守护, 这个玩意好像可以多开. 但是这个玩意是十多年前写的好久没有维护了, 又不能处理文件路径中的空格, 甚至基本功能都实现不了. 我尝试了一个下午, 反正这玩意运行之后 <code>php-cgi</code> 没有起来, 过了几秒钟自己也退出了.</p>
+<p>兜兜转转, 基本上爬完了所有的文章, 最后找到了 <a target="_blank" rel="noopener" href="https://github.com/deemru/php-cgi-spawner">php-cgi-spawner</a>. 这玩意好像是毛子用 <code>C</code> 写的, 体积小性能强运行稳定, 基本功能还丰富, 简直不要太好, 就是介绍它的文章实在太少了. 运行时按照官网提示给好参数, 就可以起设定数量个进程, 甚至还可以根据压力设定压力大时额外增加的进程. 试了一下杀掉进程, 马上就能恢复数量, 果然是强! 然后用 winsw 或者 nssm 添加这玩意到服务开机自启, 这个步骤就完成了.</p>
+<blockquote>
+<p>关键部分就这么短? 花了很多时间就研究这?</p>
+</blockquote>
+<blockquote>
+<p>你上你也行! 快上吧</p>
+</blockquote>
+<hr>
+<p>怎么说?</p>
+<p>死了吧…</p>
+<p>看起来完美, 测试没错误, 服务都能起来, 生产就是不行, 推送完后无响应, 更新不了一点…还是继续看看吧.</p>
+<p><strong>问题其实在于进程的用户.</strong></p>
+<p>windows 服务运行进程默认的用户是内部的一个系统账户, 或者说理解成登陆账户之前更底层的设计. 这就是为什么我们不用登陆账户, 在锁屏界面就能通过网络访问到我们的电脑. git在操作的时候会使用对应账户的ssh密钥, 我们没有上传这个密钥, 当然就访问不了. 那懂的人又要说了, 我找到这个 ssh 密钥把它传上去不就好了吗? 非也! 第一次鉴权的时候会问要不要把fingerprint怎么怎么样, 得输入yes才能执行, 那你没输, 或者下次用了别的托管平台, 照样死得不明不白. <a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000009232433?utm_source=sf-similar-article">这篇文章</a>有探讨这个问题, 也给了一些启发,但我认为不用这么烦. 所以要在服务中修改运行的账户, 查找到我们的用户账户然后输入密码, 之后起进程就会用对应账户的信息了.</p>
+<p>用自己账户的信息还有哪些好呢? 比如 nginx 在更新配置文件或者杀进程时不是一个账户会提示无法操作. 总之, 在自己手上的才是最好控制的.</p>
+<hr>
+<h2 id="最后的一些碎碎念">最后的一些碎碎念</h2>
+<p>和机器交互总是会有各种各样意想不到的问题, 如果问题很大众化, 那么网络上很容易找到解答. 但是如果问题很小众, 或者之前流传的方法过时了, 就需要自己寻求出路.</p>
+<p>自己找办法是一件很困难的事, 像走漆黑的夜路. 完全没有头绪的同时, 网上胡乱复制的答案还会干扰自己的判断. 很多人不愿意自己找解决问题的办法, 遇到问题就直接放弃了. 这习惯确实好, 毕竟天底下没学的知识那么多, 明明有学习成本更低的其他事, 为什么要在这里死磕呢? 这些人可以有大量的产出, 表面上吹得天花乱坠, 什么东西也都能搞一点. 但是涉及到深层的问题, 他们往往手足无措, 还会说: 这很重要吗? 这句话的意思其实是我不会所以不重要, 这是我最近才认识到的. 一个学金融的同事最近跟我说面试问了浅拷贝和深拷贝, 他完全没听说过. 但是他又说他做了三年的实习实现了几多个模型挖掘了几多个因子, 但你怎么会不知道最简单的拷贝呢? 这样别人怎么相信你的代码里面会不会全是隐含的错误呢? 最后他说他不学计算机, 这种概念很重要吗, 我无话可说.</p>
+<p>确实现在都很看产出, 月报周报日报, 恨不得每一分钟都要有产出. 但是这怎么可能呢? 每时每刻的产出意味着没有积淀全靠以往的知识, 别人的或者是自己的. 但是现在 <code>ChatGPT</code> 知道的不比我多吗? 我前几天问它论文里一句佶屈聱牙的句子什么意思, 它甚至可以给我数值上的例子加以说明, 我问他回测的代码怎么写, 它的实现简答而精妙跟诗一样, 甚至还写好了注释(虽然仔细看隐含着骇人的错误). 但是我问他为什么一个进程起不来, 为什么会自动退出, 为什么网络上ping不通, 为什么 php 的 windows 版本没有 fpm, 它就吱哇乱叫胡扯一通, 说着很有道理却帮不上一点的废话.</p>
+<p>我想起来我面试北大的时候组里的一位同学. 面试的题目有关多普勒效应以及量子化轨道. 想必是高考备战出身的她显然对此一无所知, 但硬是讲了很久这些东西的启示以及她自己的幼稚想法. 点评环节显然被下一位同学贬斥地体无完肤, 本以为事情到此为止的时候她竟又站起来, 近乎复述地 “总结” 了一通, 甚至还有了更深更高的感悟. 这件事情给我留下的印象极深, 每次我看到金融领域的人一知半解却十分自信地阐述最新的技术的时候(不论是区块链还是AI), 我都会想起这位同学, 她现在一定在金融行业混的很好吧, 我确实很羡慕这种胡诌的天赋, 但我也庆幸自己没有这样的能力.</p>
+<p>我跟我的同学说我花了一天搞定了 Windows 下 Webhook 调用 PHP 实现网站自动部署, 他听完顿了几秒, 仿佛在等我继续说下去, 结果我说, 就这, 他回, 就这.</p>
+<p>没用就没用吧, 反正这种文章也不会有人看, 如果幸运的你看到这里并真的解决了你的问题, 请一定发邮件告诉我, 给我卑微的一点点鼓励.</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://www.zhuoyuan-he.cn">Herbert</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://www.zhuoyuan-he.cn/Windows%E4%B8%8BWebhook%E8%B0%83%E7%94%A8PHP%E5%AE%9E%E7%8E%B0%E7%BD%91%E7%AB%99%E8%87%AA%E5%8A%A8%E9%83%A8%E7%BD%B2/">https://www.zhuoyuan-he.cn/Windows下Webhook调用PHP实现网站自动部署/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://www.zhuoyuan-he.cn" target="_blank">H的部落阁</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/webhook/">webhook</a></div><div class="post_share"><div class="social-share" data-image="/linear-gradient(20deg,%20#0062be,%20#925696,%20#cc426e,%20#fb0347)" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/%E4%BD%BF%E7%94%A8Cloudflare%E9%85%8D%E7%BD%AEopenai%E8%BD%AC%E5%8F%91%E5%B9%B6%E9%83%A8%E7%BD%B2%E7%BD%91%E9%A1%B5%E7%89%88ChatGPT/"><img class="prev-cover" src="/linear-gradient(20deg,%20#0062be,%20#925696,%20#cc426e,%20#fb0347)" onerror="onerror=null;src='/imgs/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">使用Cloudlare配置openai转发并部署网页版ChatGPT</div></div></a></div><div class="next-post pull-right"><a href="/%E4%BD%BF%E7%94%A8CloudFlare%E4%BB%A3%E7%90%86%E4%B8%AA%E4%BA%BA%E7%BD%91%E7%AB%99/"><img class="next-cover" src="/linear-gradient(20deg,%20#0062be,%20#925696,%20#cc426e,%20#fb0347)" onerror="onerror=null;src='/imgs/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">使用CloudFlare代理个人网站</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/imgs/selfie.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Herbert</div><div class="author-info__description">A soul discarded</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">29</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/herbyuan"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/herbyuan" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:herbyuan@icloud.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">Eventually you come...</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">Windows下Webhook调用PHP实现网站自动部署</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%95%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">引言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Webhook"><span class="toc-number">1.2.</span> <span class="toc-text">Webhook</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PHP%E6%96%87%E4%BB%B6"><span class="toc-number">1.3.</span> <span class="toc-text">PHP文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#php-cgi-%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF%E4%B8%8E%E8%BF%9B%E7%A8%8B%E5%AE%88%E6%8A%A4"><span class="toc-number">1.4.</span> <span class="toc-text">php-cgi 开机自启与进程守护</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E5%90%8E%E7%9A%84%E4%B8%80%E4%BA%9B%E7%A2%8E%E7%A2%8E%E5%BF%B5"><span class="toc-number">1.5.</span> <span class="toc-text">最后的一些碎碎念</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/Socket%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/" title="Socket编程基础">Socket编程基础</a><time datetime="2024-01-24T08:51:13.000Z" title="发表于 2024-01-24 16:51:13">2024-01-24</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/vPro%E4%B8%8EAMT/" title="vPro与AMT">vPro与AMT</a><time datetime="2023-10-05T14:51:33.000Z" title="发表于 2023-10-05 22:51:33">2023-10-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/PHP-Mysql%E4%B8%8EOpenSSL/" title="PHP Mysql与OpenSSL">PHP Mysql与OpenSSL</a><time datetime="2023-07-27T01:32:50.000Z" title="发表于 2023-07-27 09:32:50">2023-07-27</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/Sublime-Text%E5%BC%80%E5%90%AFmarkdown%E9%A2%84%E8%A7%88/" title="Sublime_Text开启markdown预览">Sublime_Text开启markdown预览</a><time datetime="2023-07-25T07:05:08.000Z" title="发表于 2023-07-25 15:05:08">2023-07-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/%E6%95%85%E4%BA%8B%E4%B8%80%E5%88%99-0713/" title="故事一则 0713">故事一则 0713</a><time datetime="2023-07-13T11:25:51.000Z" title="发表于 2023-07-13 19:25:51">2023-07-13</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By Herbert</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text"><span><img src="/imgs/gongan.png"><a href= "https://beian.mps.gov.cn/#/query/webSearch?code=11010802043161\" rel=\"noreferrer\" target=\"_blank\">京公网安备11010802043161</a ></span><span class="footer-separator">|</span><span><a href="https://beian.miit.gov.cn/" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;" target="_blank">京ICP备2023024480号-1</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex/dist/contrib/copy-tex.min.js"></script><script>(() => {
+  document.querySelectorAll('#article-container span.katex-display').forEach(item => {
+    btf.wrap(item, 'div', { class: 'katex-wrap'})
+  })
+})()</script></div></div></body></html>

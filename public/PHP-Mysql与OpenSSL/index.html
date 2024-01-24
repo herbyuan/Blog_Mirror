@@ -1,0 +1,194 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>PHP Mysql与OpenSSL | H的部落阁</title><meta name="author" content="Herbert"><meta name="copyright" content="Herbert"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="前段时间开了没有SSL的FTP端口, 不到两天就中勒索病毒, 现在对于网络传输安全也开始重视起来. 这几天在折腾 PHP 的一些功能, 需要连接本地 MySQL 服务, 于是尝试使用 SSL 加密, 在这里记录一下踩到的坑. 生成自签名的证书 据说 Mysql 可以使用 mysql_ssl_rsa_setup 生成证书, 但是我已经切换到了 mariadb, 并没有看到这个功能, 所以只能自己用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PHP Mysql与OpenSSL">
+<meta property="og:url" content="https://www.zhuoyuan-he.cn/PHP-Mysql%E4%B8%8EOpenSSL/index.html">
+<meta property="og:site_name" content="H的部落阁">
+<meta property="og:description" content="前段时间开了没有SSL的FTP端口, 不到两天就中勒索病毒, 现在对于网络传输安全也开始重视起来. 这几天在折腾 PHP 的一些功能, 需要连接本地 MySQL 服务, 于是尝试使用 SSL 加密, 在这里记录一下踩到的坑. 生成自签名的证书 据说 Mysql 可以使用 mysql_ssl_rsa_setup 生成证书, 但是我已经切换到了 mariadb, 并没有看到这个功能, 所以只能自己用">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.zhuoyuan-he.cn/linear-gradient(20deg,%20#0062be,%20#925696,%20#cc426e,%20#fb0347)">
+<meta property="article:published_time" content="2023-07-27T01:32:50.000Z">
+<meta property="article:modified_time" content="2024-01-24T08:49:32.619Z">
+<meta property="article:author" content="Herbert">
+<meta property="article:tag" content="PHP MySQL OpenSSL">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.zhuoyuan-he.cn/linear-gradient(20deg,%20#0062be,%20#925696,%20#cc426e,%20#fb0347)"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://www.zhuoyuan-he.cn/PHP-Mysql%E4%B8%8EOpenSSL/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: true,
+    post: true
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'PHP Mysql与OpenSSL',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-01-24 16:49:32'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/imgs/selfie.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">29</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background: linear-gradient(20deg, #0062be, #925696, #cc426e, #fb0347)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">H的部落阁</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">PHP Mysql与OpenSSL</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-07-27T01:32:50.000Z" title="发表于 2023-07-27 09:32:50">2023-07-27</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-01-24T08:49:32.619Z" title="更新于 2024-01-24 16:49:32">2024-01-24</time></span></div><div class="meta-secondline"></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>前段时间开了没有SSL的FTP端口, 不到两天就中勒索病毒, 现在对于网络传输安全也开始重视起来. 这几天在折腾 <code>PHP</code> 的一些功能, 需要连接本地 <code>MySQL</code> 服务, 于是尝试使用 <code>SSL</code> 加密, 在这里记录一下踩到的坑.</p>
+<h2 id="生成自签名的证书">生成自签名的证书</h2>
+<p>据说 <code>Mysql</code> 可以使用 <code>mysql_ssl_rsa_setup</code> 生成证书, 但是我已经切换到了 <code>mariadb</code>, 并没有看到这个功能, 所以只能自己用 <code>openssl</code> 生成.</p>
+<p>网上有很多方法是先生成数字证书, 然后分别生成服务端和客户端的密钥和数字证书, 但是这个方法我用了提示证书错误. 下面这个方法生成的证书是可以使用的:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ openssl req -x509 -newkey rsa:1024 -days 3650 -keyout server-key-enc.pem -out server-cert.pem -subj <span class="string">&#x27;/DC=com/DC=example/CN=server&#x27;</span> -passout pass:qwerty</span><br><span class="line"></span><br><span class="line">$ openssl rsa -<span class="keyword">in</span> server-key-enc.pem -out server-key.pem -passin pass:qwerty -passout pass:</span><br><span class="line"></span><br><span class="line">$ openssl req -x509 -newkey rsa:1024 -days 3650 -keyout client-key-enc.pem -out client-cert.pem -subj <span class="string">&#x27;/DC=com/DC=example/CN=client&#x27;</span> -passout pass:qwerty</span><br><span class="line"></span><br><span class="line">$ openssl rsa -<span class="keyword">in</span> client-key-enc.pem -out client-key.pem -passin pass:qwerty -passout pass:  </span><br><span class="line"></span><br><span class="line">$ <span class="built_in">cat</span> server-cert.pem client-cert.pem &gt; ca.pem</span><br></pre></td></tr></table></figure>
+<p>关键在于 <code>ca.pem</code> 是最后由两个文件合成的, 原因据说是需要提供双向的验证. 注意这里我们使用的都是本地的 <code>IP</code> 进行连接, 所以需要跳过域名的验证. 然后把证书移动到一个合适的存储位置.</p>
+<h2 id="把证书的位置写入配置文件">把证书的位置写入配置文件</h2>
+<p>然后编辑配置文件 <code>my.cnf</code>, 这个文件往往位于某个 <code>/etc</code> 文件夹中, 加入以下内容:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[mysqld]</span><br><span class="line">ssl-ca=PATH/TO/ca-cert.pem</span><br><span class="line">ssl-cert=PATH/TO/server-cert.pem</span><br><span class="line">ssl-key=PATH/TO/server-key.pem</span><br></pre></td></tr></table></figure>
+<p>进入 <code>Mysql</code> 的命令行, 输入 <code>show variables like '%ssl%';</code> 查看当前状态</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [(none)]&gt; show variables like <span class="string">&#x27;%ssl%&#x27;</span>;</span><br><span class="line">+---------------------+---------------------------------+</span><br><span class="line">| Variable_name       | Value                           |</span><br><span class="line">+---------------------+---------------------------------+</span><br><span class="line">| have_openssl        | YES                             |</span><br><span class="line">| have_ssl            | YES                             |</span><br><span class="line">| ssl_ca              | /usr/local/cert/ca.pem          |</span><br><span class="line">| ssl_capath          |                                 |</span><br><span class="line">| ssl_cert            | /usr/local/cert/server-cert.pem |</span><br><span class="line">| ssl_cipher          |                                 |</span><br><span class="line">| ssl_crl             |                                 |</span><br><span class="line">| ssl_crlpath         |                                 |</span><br><span class="line">| ssl_key             | /usr/local/cert/server-key.pem  |</span><br><span class="line">| version_ssl_library | OpenSSL 3.1.1 30 May 2023       |</span><br><span class="line">+---------------------+---------------------------------+</span><br><span class="line">10 rows <span class="keyword">in</span> <span class="built_in">set</span> (0.033 sec)</span><br></pre></td></tr></table></figure>
+<p>可以看到 <code>have_openssl</code> 和 <code>have_ssl</code> 都是 <code>YES</code>, 表示当前配置支持 <code>SSL</code>, 否则还要考虑将 <code>openssl</code> 作为扩展使用 <code>phpize</code> 加入(有空了再写).</p>
+<p>配置好了之后重启 <code>Mysql</code> 服务, 命令可能是 <code>service restart mysql</code>, 可能是 <code>brew services restart mysql</code>, 根据自己的配置来确定. 重启之后用相同的命令应该可以看到如上述的输出, 此时 <code>Mysql</code> 仍然可以不使用 <code>SSL</code> 登录. 我们创建一个强制使用 <code>SSL</code> 的账户, 并配置访问的权限:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GRANT ALL PRIVILEGES ON *.* TO <span class="string">&#x27;ssluser&#x27;</span>@<span class="string">&#x27;localhost&#x27;</span> IDENTIFIED BY <span class="string">&#x27;password&#x27;</span> require ssl;</span><br><span class="line">FLUSH PRIVILEGES;  </span><br></pre></td></tr></table></figure>
+<p>使用以下命令登录:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mariadb --ssl-ca=/usr/local/cert/ca.pem --ssl-cert=/usr/local/cert/client-cert.pem --ssl-key=/usr/local/cert/client-key.pem -u ssluser -p</span><br></pre></td></tr></table></figure>
+<p>需要输入密码, 这里也可以直接在命令中填充密码, 但是 <code>-p</code> 和密码之间不能有空格. 使用 <code>status</code> 查看当前连接的状态, 确认 <code>SSL</code> 已经启用. 其实在这里不指定客户端的证书也是可以登录的, 但是只是使用 <code>SSL</code> 加密链接, 并不对身份加以验证.</p>
+<p>使用 <code>Navicat</code> 连接时, 在 <code>SSL</code> 界面勾选启用, 并设置证书的位置, 但是不用勾选 <code>验证CA的服务器证书</code>, 不然会报错.</p>
+<img src="navicat.png" width="60%">
+<h2 id="PHP中使用SSL">PHP中使用SSL</h2>
+<p>为了源码泄露导致密码被窃取, 这里可以把密码等敏感信息放在网站的根目录之外的文件, 使用时 <code>include</code> 进来. 注意这里的 <code>$servername</code> 一定不能写 <code>localhost</code>, 不然会在连接时报如下错误:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Warning: mysqli_real_connect(): This stream does not support SSL/crypto in /html/sql-ssl.php on line 10</span><br><span class="line"></span><br><span class="line">Warning: mysqli_real_connect(): Cannot connect to MySQL by using SSL in /html/sql-ssl.php on line 10</span><br></pre></td></tr></table></figure>
+<p>很多人说这是 <code>openssl</code> 没有配置好需要重新加入 <code>openssl</code> 扩展, 但是查看 <code>phpinfo</code> 可以看到明明 <code>openssl</code> 已经在编译时就加入了, 即使费劲心思把它作为 <code>.so</code> 加载进来也会报重复引入的警告. 折腾了两天, 终于找到一个回帖, 说问题的关键如下:</p>
+<blockquote>
+<p>当你连接到 <code>localhost</code> 时</p>
+<blockquote>
+<p>mysql_connect(“localhost”,…)</p>
+</blockquote>
+<p>如果这样的链接可用，则通信通过本地套接字转换</p>
+<blockquote>
+<p>mysql_connect(): [2002]  (trying to connect via unix:/// (…)</p>
+</blockquote>
+<p>实际上，这样的链接“不支持SSL /加密”（加密本地通信信道没有意义） .<br>
+要绕过此优化并强制通过 <code>TCP/IP</code> 进行通信，请连接到 <code>127.0.0.1</code> .<br>
+<strong>特别鸣谢<a target="_blank" rel="noopener" href="https://www.javaroad.cn/questions/14993">这个链接</a>, 虽然我觉得这是英文翻译过来的, 但我确实找不到原贴.</strong></p>
+</blockquote>
+<p>使用以下代码建立连接:</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    <span class="keyword">include</span>(<span class="string">&quot;../outside/db_info.php&quot;</span>);</span><br><span class="line">    <span class="comment">// 创建连接</span></span><br><span class="line">    <span class="variable">$conn</span>=<span class="title function_ invoke__">mysqli_init</span>();</span><br><span class="line">    <span class="keyword">if</span> (!<span class="variable">$conn</span>)</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">die</span>(<span class="string">&quot;mysqli_init failed&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="title function_ invoke__">mysqli_ssl_set</span>(<span class="variable">$conn</span>,<span class="string">&quot;client-key.pem&quot;</span>,<span class="string">&quot;client-cert.pem&quot;</span>,<span class="string">&quot;ca.pem&quot;</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>); </span><br><span class="line">    <span class="keyword">if</span> (!<span class="title function_ invoke__">mysqli_real_connect</span>(<span class="variable">$conn</span>,<span class="variable">$servername</span>, <span class="variable">$username</span>, <span class="variable">$password</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>, MYSQLI_CLIENT_SSL_DONT_VERIFY_SERVER_CERT))</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">die</span>(<span class="string">&quot;Connect Error: &quot;</span> . <span class="title function_ invoke__">mysqli_connect_error</span>());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">unset</span>(<span class="variable">$servername</span>, <span class="variable">$username</span>, <span class="variable">$password</span>);</span><br><span class="line">    <span class="comment">// 检测连接</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="variable">$conn</span>-&gt;connect_error) &#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&quot;连接失败: &quot;</span> . <span class="variable">$conn</span>-&gt;connect_error);</span><br><span class="line">    &#125; </span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;连接成功&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="variable">$conn</span>-&gt;<span class="title function_ invoke__">close</span>();</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>就可以连上啦!</p>
+<h2 id="phpize-添加-openssl-扩展"><code>phpize</code> 添加 <code>openssl</code> 扩展</h2>
+<p><code>PHP</code> 添加扩展的只要方式有两种, 一种是 <code>PECL</code>, 一种是 <code>phpize</code>. 在能使用 <code>pecl</code> 时尽量使用, 可以减少好多奇怪的问题. 这里就来讲讲添加扩展的方式.</p>
+<p>这里选用 <code>openssl</code> 是因为这玩意没法用 <code>pecl</code> 安装, 网上的教程也比较奇怪. 首先进入 <code>php/include/php/ext</code> 查看有没有 <code>openssl</code> 文件夹, 这里文件夹存在并不代表已经作为扩展加入, 因为这里只是些配置文件. 如果没有, 去 <a target="_blank" rel="noopener" href="https://www.php.net/downloads.php"><code>PHP</code> 官网</a>下载同版本的安装包, 里面有对应的文件夹拷贝过来. 把 <code>config0.m4</code> 重命名为 <code>config.m4</code>, 然后在此目录下运行以下指令:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ /opt/homebrew/Cellar/php/8.2.8/bin/phpize</span><br><span class="line">$ ./configure --with-php-config=/opt/homebrew/Cellar/php/8.2.8/bin/php-config</span><br><span class="line">$ make</span><br><span class="line">$ make install</span><br></pre></td></tr></table></figure>
+<p>如果没有安装 <code>pkg-config</code> 需要执行 <code>brew install pkg-config</code>. 如果提示找不到 <code>openssl</code> 的文件可以尝试指定目录或者在 <code>/usr/local</code> 进行一次标准的安装. 说实话这么重要的库我建议还是不要用 <code>HomeBrew</code> 安装, 因为它对头文件的支持实在是太差了.</p>
+<p>安装完后会自动把 <code>openssl.so</code> 拷贝到 <code>pecl</code> 文件夹. 使用 <code>php --ini</code> 查看配置文件位置, 打开 <code>php.ini</code> 文件取消 <code>extension=openssl</code> 的注释或者加入 <code>extension=&quot;openssl.so&quot;</code>. 执行 <code>php -m | grep openssl</code>, 有输出则已经启动扩展.</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://www.zhuoyuan-he.cn">Herbert</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://www.zhuoyuan-he.cn/PHP-Mysql%E4%B8%8EOpenSSL/">https://www.zhuoyuan-he.cn/PHP-Mysql与OpenSSL/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://www.zhuoyuan-he.cn" target="_blank">H的部落阁</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/PHP-MySQL-OpenSSL/">PHP MySQL OpenSSL</a></div><div class="post_share"><div class="social-share" data-image="/linear-gradient(20deg,%20#0062be,%20#925696,%20#cc426e,%20#fb0347)" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/vPro%E4%B8%8EAMT/"><img class="prev-cover" src="/linear-gradient(20deg,%20#0062be,%20#925696,%20#cc426e,%20#fb0347)" onerror="onerror=null;src='/imgs/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">vPro与AMT</div></div></a></div><div class="next-post pull-right"><a href="/Sublime-Text%E5%BC%80%E5%90%AFmarkdown%E9%A2%84%E8%A7%88/"><img class="next-cover" src="/linear-gradient(20deg,%20#0062be,%20#925696,%20#cc426e,%20#fb0347)" onerror="onerror=null;src='/imgs/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Sublime_Text开启markdown预览</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/imgs/selfie.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Herbert</div><div class="author-info__description">A soul discarded</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">29</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">18</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/herbyuan"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/herbyuan" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:herbyuan@icloud.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">Eventually you come...</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%9F%E6%88%90%E8%87%AA%E7%AD%BE%E5%90%8D%E7%9A%84%E8%AF%81%E4%B9%A6"><span class="toc-number">1.</span> <span class="toc-text">生成自签名的证书</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8A%8A%E8%AF%81%E4%B9%A6%E7%9A%84%E4%BD%8D%E7%BD%AE%E5%86%99%E5%85%A5%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-number">2.</span> <span class="toc-text">把证书的位置写入配置文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PHP%E4%B8%AD%E4%BD%BF%E7%94%A8SSL"><span class="toc-number">3.</span> <span class="toc-text">PHP中使用SSL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#phpize-%E6%B7%BB%E5%8A%A0-openssl-%E6%89%A9%E5%B1%95"><span class="toc-number">4.</span> <span class="toc-text">phpize 添加 openssl 扩展</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/Socket%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/" title="Socket编程基础">Socket编程基础</a><time datetime="2024-01-24T08:51:13.000Z" title="发表于 2024-01-24 16:51:13">2024-01-24</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/vPro%E4%B8%8EAMT/" title="vPro与AMT">vPro与AMT</a><time datetime="2023-10-05T14:51:33.000Z" title="发表于 2023-10-05 22:51:33">2023-10-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/PHP-Mysql%E4%B8%8EOpenSSL/" title="PHP Mysql与OpenSSL">PHP Mysql与OpenSSL</a><time datetime="2023-07-27T01:32:50.000Z" title="发表于 2023-07-27 09:32:50">2023-07-27</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/Sublime-Text%E5%BC%80%E5%90%AFmarkdown%E9%A2%84%E8%A7%88/" title="Sublime_Text开启markdown预览">Sublime_Text开启markdown预览</a><time datetime="2023-07-25T07:05:08.000Z" title="发表于 2023-07-25 15:05:08">2023-07-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/%E6%95%85%E4%BA%8B%E4%B8%80%E5%88%99-0713/" title="故事一则 0713">故事一则 0713</a><time datetime="2023-07-13T11:25:51.000Z" title="发表于 2023-07-13 19:25:51">2023-07-13</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By Herbert</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text"><span><img src="/imgs/gongan.png"><a href= "https://beian.mps.gov.cn/#/query/webSearch?code=11010802043161\" rel=\"noreferrer\" target=\"_blank\">京公网安备11010802043161</a ></span><span class="footer-separator">|</span><span><a href="https://beian.miit.gov.cn/" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;" target="_blank">京ICP备2023024480号-1</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex/dist/contrib/copy-tex.min.js"></script><script>(() => {
+  document.querySelectorAll('#article-container span.katex-display').forEach(item => {
+    btf.wrap(item, 'div', { class: 'katex-wrap'})
+  })
+})()</script></div></div></body></html>

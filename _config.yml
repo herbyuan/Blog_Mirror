@@ -3,8 +3,8 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: H's Blog
-subtitle: 'testsubtitle'
+title: H的部落阁
+subtitle: 'Welcome'
 description: 'A soul discarded'
 keywords:
 author: Herbert
@@ -13,7 +13,7 @@ timezone: 'Asia/Shanghai'
 
 # URL
 ## Set your site url here. For example, if you use GitHub Page, set url as 'https://username.github.io/project'
-url: https://blog.zhuoyuan-he.cn
+url: https://www.zhuoyuan-he.cn
 permalink: :title/
 permalink_defaults:
 pretty_urls:
