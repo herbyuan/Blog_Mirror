@@ -1,0 +1,186 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>排序问题 | H的部落阁</title><meta name="author" content="Herbert"><meta name="copyright" content="Herbert"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="排序问题 讲讲排序问题. 常见的排序算法有冒泡排序, 归并排序, 快速排序, 桶排序等. 这里都不会讲因为到处都有. 大致掌握排序算法后, 只要定义元素的大小比较方式, 不管什么高级编程语言基本上都可以直接调用sort函数求解. 基数排序和桶排序 基数排序是对传统桶排序的扩展, 速度很快. 基数排序也是搞一堆的桶, 从低位开始每次根据这轮的比较位放到相应的桶里面然后按顺序拿出来, 这一位就排好了.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="排序问题">
+<meta property="og:url" content="https://www.zhuoyuan-he.cn/%E6%8E%92%E5%BA%8F%E9%97%AE%E9%A2%98/index.html">
+<meta property="og:site_name" content="H的部落阁">
+<meta property="og:description" content="排序问题 讲讲排序问题. 常见的排序算法有冒泡排序, 归并排序, 快速排序, 桶排序等. 这里都不会讲因为到处都有. 大致掌握排序算法后, 只要定义元素的大小比较方式, 不管什么高级编程语言基本上都可以直接调用sort函数求解. 基数排序和桶排序 基数排序是对传统桶排序的扩展, 速度很快. 基数排序也是搞一堆的桶, 从低位开始每次根据这轮的比较位放到相应的桶里面然后按顺序拿出来, 这一位就排好了.">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.zhuoyuan-he.cn/linear-gradient(20deg,%20#0062be,%20#925696,%20#cc426e,%20#fb0347)">
+<meta property="article:published_time" content="2024-03-27T01:27:35.000Z">
+<meta property="article:modified_time" content="2024-03-27T01:30:35.915Z">
+<meta property="article:author" content="Herbert">
+<meta property="article:tag" content="排序">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.zhuoyuan-he.cn/linear-gradient(20deg,%20#0062be,%20#925696,%20#cc426e,%20#fb0347)"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://www.zhuoyuan-he.cn/%E6%8E%92%E5%BA%8F%E9%97%AE%E9%A2%98/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: true,
+    post: true
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '排序问题',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-03-27 09:30:35'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/imgs/selfie.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">31</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">20</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background: linear-gradient(20deg, #0062be, #925696, #cc426e, #fb0347)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">H的部落阁</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">排序问题</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-03-27T01:27:35.000Z" title="发表于 2024-03-27 09:27:35">2024-03-27</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-03-27T01:30:35.915Z" title="更新于 2024-03-27 09:30:35">2024-03-27</time></span></div><div class="meta-secondline"></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1>排序问题</h1>
+<p>讲讲排序问题.</p>
+<p>常见的排序算法有冒泡排序, 归并排序, 快速排序, 桶排序等. 这里都不会讲因为到处都有. 大致掌握排序算法后, 只要定义元素的大小比较方式, 不管什么高级编程语言基本上都可以直接调用sort函数求解.</p>
+<h2 id="基数排序和桶排序">基数排序和桶排序</h2>
+<p>基数排序是对传统桶排序的扩展, 速度很快.<br>
+基数排序也是搞一堆的桶, 从低位开始每次根据这轮的比较位放到相应的桶里面然后按顺序拿出来, 这一位就排好了.</p>
+<p>时间复杂度是 <code>O(M+N)</code> 空间复杂度 <code>O(MN)</code> m是保存桶的元素个数数组占的空间, n是保存桶的二维数组占的空间.</p>
+<h2 id="稳定排序">稳定排序</h2>
+<p>如果相同的元素排序之后顺序保证不变, 则排序算法是稳定的.</p>
+<p>冒泡排序, 插入排序, 基数排序, 归并排序等都是稳定排序.</p>
+<p>快速排序是稳定的吗？原始的快速排序算法是不稳定的. 因为如果选定的轴(pivot)有相同元素, 按照规则 <strong>把大于等于轴的元素放到右边小于轴的元素放到左边</strong> 那相同的其余元素都得到右边去了, 因此快速排序不是稳定的.</p>
+<p>我们讨论快速排序, 往往就想到分治法且每一步<strong>把大于等于轴的元素放到右边小于轴的元素放到左边</strong>就完事了. 但是至于怎么把元素放到对应的左右, 值得注意. 在分治的一个区间 <code>[i,j]</code> 中, 我们随便找个轴(不妨就拿最后一个元素), 然后考虑剩下的元素. 我们有两个cursor分别指向剩余元素的头尾, 相向移动知道相遇. 我们希望左边的元素总比轴小, 右边总比轴大. 遇到违背规则的位置时我们就停下, 等到另一个光标检测到违背的数. 此时我们交换两个cursor指向的元素, 则此时两边都不违背规则, 指针可以继续移动了. 最后我们把轴放到中间正确的位置, 一次整理就完成了.</p>
+<blockquote>
+<p>我们一开始想着或许可以修改规则来维持稳定, 比如我让左边执行小于等于规则, 右边执行小于规则, 是不是轴就稳定了呢？非也！这样的思路没考虑到元素互换这一步, 以及元素互换也会搞乱相同值的顺序.</p>
+</blockquote>
+<blockquote>
+<p>有人说那我不要互换了开个新的数组存元素是不是就稳定了呢？是的！但是没有意义！快速排序要的就是单倍空间, 开新数组就成了双倍空间了, 我为什么不用归并排序？所以分析算法要考虑到原始的意义.</p>
+</blockquote>
+<p>快速排序和归并排序最差情况下时间复杂的是 O(n^2).</p>
+<h2 id="原地重排-in-situ-permutation">原地重排(in-situ permutation)</h2>
+<p>原地(原址、就地)排序是指：基本上不需要额外辅助的的空间, 允许少量额外的辅助变量进行的排序. 就是在原来的排序数组中比较和交换的排序. 像选择排序, 插入排序, 希尔排序, 快速排序, 堆排序等都会有一项比较且交换操作(swap(i,j))的逻辑在其中, 因此他们都是属于原地(原址、就地)排序, 而合并排序, 计数排序, 基数排序等不是原地排序.</p>
+<h2 id="第二个问题叫做排序索引-argsort">第二个问题叫做排序索引(argsort)</h2>
+<p>如果我不是要得到原先数据排好序的结果, 而是只要获得原先数据大小顺序的索引, 这个问题就是 <code>argsort</code>. 最终返回的数组是 <code>A = [0,1,2,...,len(arr)-1]</code>, 表示 <code>arr</code> 中第i小的数在A[i]位置上. 如果只是为了实现这样的功能, 算法上不是特别复杂. 考虑到 <code>indirection</code> 的想法, 只要对原先的排序算法略加修改, 在排序时并不真正移动数据, 而是记录索引的改变, 并在取数据时增加用索引取得, 则大体上时间复杂度应该是一致的.</p>
+<blockquote>
+<p>python 中可以使用 numpy.argsort()函数</p>
+</blockquote>
+<h2 id="排名问题-rank">排名问题 (rank)</h2>
+<p>这个问题要求的是数组的排名, 即数组中第i个元素是第几大的. 考虑到索引排序已经得到了第i大的元素是第几个, 其实这个问题就是 <code>argsort</code> 的 K-V 互换.</p>
+<p>记一次argsort的结果为A, 两次argsort的结果为B. 则A[i]表示 原数组中第i小的元素的索引是A[i], 原先索引为 A[i] 的数应当是第 i 小的.</p>
+<p>所求的sort数组中, 应该把 j 放在 A[j] 位置上.</p>
+<p>由于A数组中的元素就是 <code>[0,1,2,...,len(arr)-1]</code>, 所以第 j 小的元素值就是 j,  B[j] 表示 A 第 j 小的数的位置,  也就是 A 中数值 j 的位置. 这样恰好满足 K-V 互换, 于是两次 <code>argsort</code> 得到的就是 sort 的结果.</p>
+<p>这里的巧妙之处在于 <strong>所以第 j 小的元素值就是 j</strong>,  多做了一次于是又回来了. 看着有点绕其实也真的有点绕.</p>
+<h3 id="分析一下复杂度">分析一下复杂度</h3>
+<p>每个元素通过索引取得的时间假设为 <code>O(1)</code>. 第一次索引排序的时间做到 <code>O(nlogn)</code> 是没问题的, 因为增加一次间接的时间都可以看作常数.</p>
+<p>第二次是在一个给定范围的数组上做原地排序（感觉是没仔细想）</p>
+<p>如果不考虑空间复杂度, K-V互换的时间可以是 <code>O(n)</code> 的, 搞个桶排序直接塞回去就好了.</p>
+<p>若是一定要原地, 不能占用双倍空间, 我还没想好, 但是反正总体复杂度肯定是 <code>O(nlogn)</code>.</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://www.zhuoyuan-he.cn">Herbert</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://www.zhuoyuan-he.cn/%E6%8E%92%E5%BA%8F%E9%97%AE%E9%A2%98/">https://www.zhuoyuan-he.cn/排序问题/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://www.zhuoyuan-he.cn" target="_blank">H的部落阁</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%8E%92%E5%BA%8F/">排序</a></div><div class="post_share"><div class="social-share" data-image="/linear-gradient(20deg,%20#0062be,%20#925696,%20#cc426e,%20#fb0347)" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/%E6%9C%9F%E6%9D%83%E5%85%AC%E5%BC%8F/"><img class="prev-cover" src="/linear-gradient(20deg,%20#0062be,%20#925696,%20#cc426e,%20#fb0347)" onerror="onerror=null;src='/imgs/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">期权公式</div></div></a></div><div class="next-post pull-right"><a href="/Socket%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/"><img class="next-cover" src="/linear-gradient(20deg,%20#0062be,%20#925696,%20#cc426e,%20#fb0347)" onerror="onerror=null;src='/imgs/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Socket编程基础</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/imgs/selfie.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Herbert</div><div class="author-info__description">A soul discarded</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">31</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">20</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/herbyuan"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/herbyuan" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:herbyuan@icloud.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">Eventually you come...</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">排序问题</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%95%B0%E6%8E%92%E5%BA%8F%E5%92%8C%E6%A1%B6%E6%8E%92%E5%BA%8F"><span class="toc-number">1.1.</span> <span class="toc-text">基数排序和桶排序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A8%B3%E5%AE%9A%E6%8E%92%E5%BA%8F"><span class="toc-number">1.2.</span> <span class="toc-text">稳定排序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8E%9F%E5%9C%B0%E9%87%8D%E6%8E%92-in-situ-permutation"><span class="toc-number">1.3.</span> <span class="toc-text">原地重排(in-situ permutation)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E4%B8%AA%E9%97%AE%E9%A2%98%E5%8F%AB%E5%81%9A%E6%8E%92%E5%BA%8F%E7%B4%A2%E5%BC%95-argsort"><span class="toc-number">1.4.</span> <span class="toc-text">第二个问题叫做排序索引(argsort)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%92%E5%90%8D%E9%97%AE%E9%A2%98-rank"><span class="toc-number">1.5.</span> <span class="toc-text">排名问题 (rank)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E6%9E%90%E4%B8%80%E4%B8%8B%E5%A4%8D%E6%9D%82%E5%BA%A6"><span class="toc-number">1.5.1.</span> <span class="toc-text">分析一下复杂度</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/%E6%9C%9F%E6%9D%83%E5%85%AC%E5%BC%8F/" title="期权公式">期权公式</a><time datetime="2024-03-27T01:30:54.000Z" title="发表于 2024-03-27 09:30:54">2024-03-27</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/%E6%8E%92%E5%BA%8F%E9%97%AE%E9%A2%98/" title="排序问题">排序问题</a><time datetime="2024-03-27T01:27:35.000Z" title="发表于 2024-03-27 09:27:35">2024-03-27</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/Socket%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/" title="Socket编程基础">Socket编程基础</a><time datetime="2024-01-24T08:51:13.000Z" title="发表于 2024-01-24 16:51:13">2024-01-24</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/vPro%E4%B8%8EAMT/" title="vPro与AMT">vPro与AMT</a><time datetime="2023-10-05T14:51:33.000Z" title="发表于 2023-10-05 22:51:33">2023-10-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/PHP-Mysql%E4%B8%8EOpenSSL/" title="PHP Mysql与OpenSSL">PHP Mysql与OpenSSL</a><time datetime="2023-07-27T01:32:50.000Z" title="发表于 2023-07-27 09:32:50">2023-07-27</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By Herbert</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text"><span><img src="/imgs/gongan.png"><a href= "https://beian.mps.gov.cn/#/query/webSearch?code=11010802043161\" rel=\"noreferrer\" target=\"_blank\">京公网安备11010802043161</a ></span><span class="footer-separator">|</span><span><a href="https://beian.miit.gov.cn/" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;" target="_blank">京ICP备2023024480号-1</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex/dist/contrib/copy-tex.min.js"></script><script>(() => {
+  document.querySelectorAll('#article-container span.katex-display').forEach(item => {
+    btf.wrap(item, 'div', { class: 'katex-wrap'})
+  })
+})()</script></div></div></body></html>
